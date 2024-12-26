@@ -4,19 +4,22 @@ const { Pool } = require('pg');
 const path = require('path');
 const app = express();
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files with caching
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: '1d' }));
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
 
 // Initialize PostgreSQL connection pool
 const pool = new Pool({
-    user: 'user_management_db_2fao_user', // Replace with your actual DB username
-    host: 'dpg-ctmg7dq3esus739osqhg-a', // Replace with your actual DB host
-    database: 'user_management_db_2fao', // Replace with your actual DB name
-    password: 'JrtDg6TZ61ojUDNJvc0kf2q2mfg0dc8W', // Replace with your actual DB password
+    user: 'user_management_db_2fao_user', // Your database username
+    host: 'dpg-ctmg7dq3esus739osqhg-a.oregon-postgres.render.com', // Your database hostname
+    database: 'user_management_db_2fao', // Your database name
+    password: 'JrtDg6TZ61ojUDNJvc0kf2q2mfg0dc8W', // Your database password
     port: 5432, // Default PostgreSQL port
+    ssl: {
+        rejectUnauthorized: false, // Allows self-signed certificates
+    },
 });
 
 // Test the connection
@@ -47,8 +50,18 @@ app.post('/add-user', async (req, res) => {
         res.send(`User added successfully with ID: ${result.rows[0].id}`);
     } catch (err) {
         console.error('Error inserting user:', err.message);
-        res.status(500).send('Error saving user');
+        res.status(500).send('An unexpected error occurred. Please try again later.');
     }
+});
+
+// Serve B2C Area
+app.get('/user', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'b2c.html'));
+});
+
+// Serve Admin Area
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
 // GET route to list all users
@@ -58,7 +71,7 @@ app.get('/users', async (req, res) => {
         res.json(result.rows);
     } catch (err) {
         console.error('Error retrieving users:', err.message);
-        res.status(500).send('Error retrieving users');
+        res.status(500).send('An unexpected error occurred. Please try again later.');
     }
 });
 
@@ -82,7 +95,7 @@ app.put('/update-user/:id', async (req, res) => {
         res.send(`User with ID: ${id} updated successfully.`);
     } catch (err) {
         console.error('Error updating user:', err.message);
-        res.status(500).send('Error updating user');
+        res.status(500).send('An unexpected error occurred. Please try again later.');
     }
 });
 
@@ -101,7 +114,7 @@ app.delete('/delete-user/:id', async (req, res) => {
         res.send(`User with ID: ${id} deleted successfully.`);
     } catch (err) {
         console.error('Error deleting user:', err.message);
-        res.status(500).send('Error deleting user');
+        res.status(500).send('An unexpected error occurred. Please try again later.');
     }
 });
 

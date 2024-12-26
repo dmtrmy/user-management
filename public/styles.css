@@ -1,0 +1,49 @@
+/* Centering the form in the middle of the page */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    background-color: #f0f0f0; /* Light gray background */
+}
+
+.container {
+    text-align: center;
+    background: white;
+    padding: 20px 30px; /* Add horizontal padding */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    max-width: 400px; /* Restrict width */
+    width: calc(100% - 40px); /* Make responsive with proper padding */
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+form input {
+    width: calc(100% - 20px); /* Ensure consistent padding inside the input */
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+form button {
+    padding: 10px 20px;
+    background-color: #007BFF; /* Blue button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
