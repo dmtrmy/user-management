@@ -1,76 +1,87 @@
 // Importing required libraries
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
-const app = express();
+const { Pool } = require('pg');
 const path = require('path');
+const app = express();
+
+// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Initialize SQLite database
-const db = new sqlite3.Database('./users.db', (err) => {
-    if (err) {
-        console.error('Error opening database:', err.message);
-    } else {
-        console.log('Connected to SQLite database.');
-
-        // Create the "users" table if it doesn't exist
-        db.run(`
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                email TEXT NOT NULL UNIQUE
-            )
-        `, (err) => {
-            if (err) {
-                console.error('Error creating table:', err.message);
-            } else {
-                console.log('Users table created or already exists.');
-            }
-        });
-    }
-});
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
 
-// Define a route for testing
+// Initialize PostgreSQL connection pool
+const pool = new Pool({
+    user: 'user_management_db_2fao_user', // Replace with your actual DB username
+    host: 'dpg-ctmg7dq3esus739osqhg-a', // Replace with your actual DB host
+    database: 'user_management_db_2fao', // Replace with your actual DB name
+    password: 'JrtDg6TZ61ojUDNJvc0kf2q2mfg0dc8W', // Replace with your actual DB password
+    port: 5432, // Default PostgreSQL port
+});
+
+// Test the connection
+pool.connect((err) => {
+    if (err) {
+        console.error('Error connecting to PostgreSQL:', err.message);
+    } else {
+        console.log('Connected to PostgreSQL database.');
+    }
+});
+
+// Route to create the "users" table
+app.get('/create-users-table', async (req, res) => {
+    try {
+        const query = `
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL UNIQUE
+            )
+        `;
+        await pool.query(query);
+        res.send('Users table created successfully!');
+    } catch (err) {
+        console.error('Error creating users table:', err.message);
+        res.status(500).send(`Error creating users table: ${err.message}`);
+    }
+});
+
+// Define a test route
 app.get('/', (req, res) => {
     res.send('Hello, world!');
 });
 
-// POST route to add a user (Save to SQLite database)
-app.post('/add-user', (req, res) => {
+// POST route to add a user
+app.post('/add-user', async (req, res) => {
     const { name, email } = req.body;
 
-    // Validate input
     if (!name || !email) {
         return res.status(400).send('Name and email are required');
     }
 
-    // Insert user into the database
-    const query = 'INSERT INTO users (name, email) VALUES (?, ?)';
-    db.run(query, [name, email], function (err) {
-        if (err) {
-            console.error('Error inserting user:', err.message); // Log the error
-            return res.status(500).send(`Error saving user: ${err.message}`); // Send error details to the client
-        }
-        res.send(`User added successfully with ID: ${this.lastID}`);
-    });
+    try {
+        const query = 'INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id';
+        const result = await pool.query(query, [name, email]);
+        res.send(`User added successfully with ID: ${result.rows[0].id}`);
+    } catch (err) {
+        console.error('Error inserting user:', err.message);
+        res.status(500).send('Error saving user');
+    }
 });
 
-// GET route to list all users (Retrieve from SQLite database)
-app.get('/users', (req, res) => {
-    const query = 'SELECT * FROM users';
-    db.all(query, [], (err, rows) => {
-        if (err) {
-            console.error('Error retrieving users:', err.message);
-            return res.status(500).send('Error retrieving users');
-        }
-        res.json(rows);
-    });
+// GET route to list all users
+app.get('/users', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM users');
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error retrieving users:', err.message);
+        res.status(500).send('Error retrieving users');
+    }
 });
 
 // PUT route to update a user
-app.put('/update-user/:id', (req, res) => {
+app.put('/update-user/:id', async (req, res) => {
     const { id } = req.params;
     const { name, email } = req.body;
 
@@ -78,37 +89,38 @@ app.put('/update-user/:id', (req, res) => {
         return res.status(400).send('Name and email are required');
     }
 
-    const query = 'UPDATE users SET name = ?, email = ? WHERE id = ?';
-    db.run(query, [name, email, id], function (err) {
-        if (err) {
-            console.error('Error updating user:', err.message);
-            return res.status(500).send('Error updating user');
-        }
-        res.send(`User with ID: ${id} updated successfully.`);
-    });
-});
+    try {
+        const query = 'UPDATE users SET name = $1, email = $2 WHERE id = $3';
+        const result = await pool.query(query, [name, email, id]);
 
-// DELETE route to delete a user
-app.delete('/delete-user/:id', (req, res) => {
-    const { id } = req.params;
-
-    console.log(`Delete request received for user ID: ${id}`);
-
-    const query = 'DELETE FROM users WHERE id = ?';
-    db.run(query, [id], function (err) {
-        if (err) {
-            console.error('Error deleting user:', err.message);
-            return res.status(500).send(`Error deleting user: ${err.message}`);
-        }
-
-        if (this.changes === 0) {
-            console.warn(`No user found with ID: ${id}`);
+        if (result.rowCount === 0) {
             return res.status(404).send(`User with ID: ${id} not found`);
         }
 
-        console.log(`User with ID: ${id} deleted successfully.`);
+        res.send(`User with ID: ${id} updated successfully.`);
+    } catch (err) {
+        console.error('Error updating user:', err.message);
+        res.status(500).send('Error updating user');
+    }
+});
+
+// DELETE route to delete a user
+app.delete('/delete-user/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const query = 'DELETE FROM users WHERE id = $1';
+        const result = await pool.query(query, [id]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).send(`User with ID: ${id} not found`);
+        }
+
         res.send(`User with ID: ${id} deleted successfully.`);
-    });
+    } catch (err) {
+        console.error('Error deleting user:', err.message);
+        res.status(500).send('Error deleting user');
+    }
 });
 
 // Start the server
