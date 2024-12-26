@@ -28,24 +28,6 @@ pool.connect((err) => {
     }
 });
 
-// Route to create the "users" table
-app.get('/create-users-table', async (req, res) => {
-    try {
-        const query = `
-            CREATE TABLE IF NOT EXISTS users (
-                id SERIAL PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                email VARCHAR(255) NOT NULL UNIQUE
-            )
-        `;
-        await pool.query(query);
-        res.send('Users table created successfully!');
-    } catch (err) {
-        console.error('Error creating users table:', err.message);
-        res.status(500).send(`Error creating users table: ${err.message}`);
-    }
-});
-
 // Define a test route
 app.get('/', (req, res) => {
     res.send('Hello, world!');
