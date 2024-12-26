@@ -69,6 +69,48 @@ app.get('/users', (req, res) => {
     });
 });
 
+// PUT route to update a user
+app.put('/update-user/:id', (req, res) => {
+    const { id } = req.params;
+    const { name, email } = req.body;
+
+    if (!name || !email) {
+        return res.status(400).send('Name and email are required');
+    }
+
+    const query = 'UPDATE users SET name = ?, email = ? WHERE id = ?';
+    db.run(query, [name, email, id], function (err) {
+        if (err) {
+            console.error('Error updating user:', err.message);
+            return res.status(500).send('Error updating user');
+        }
+        res.send(`User with ID: ${id} updated successfully.`);
+    });
+});
+
+// DELETE route to delete a user
+app.delete('/delete-user/:id', (req, res) => {
+    const { id } = req.params;
+
+    console.log(`Delete request received for user ID: ${id}`);
+
+    const query = 'DELETE FROM users WHERE id = ?';
+    db.run(query, [id], function (err) {
+        if (err) {
+            console.error('Error deleting user:', err.message);
+            return res.status(500).send(`Error deleting user: ${err.message}`);
+        }
+
+        if (this.changes === 0) {
+            console.warn(`No user found with ID: ${id}`);
+            return res.status(404).send(`User with ID: ${id} not found`);
+        }
+
+        console.log(`User with ID: ${id} deleted successfully.`);
+        res.send(`User with ID: ${id} deleted successfully.`);
+    });
+});
+
 // Start the server
 app.listen(3000, () => {
     console.log('Server is running on http://localhost:3000');
