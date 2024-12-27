@@ -104,7 +104,7 @@ app.get('/admin', (req, res) => {
 // GET route to list all users
 app.get('/users', async (req, res) => {
     try {
-        const query = 'SELECT uuid, name, email FROM users'; // Replace ID with UUID
+        const query = 'SELECT uuid, name, email, TO_CHAR(created_at, \'DD.MM.YYYY\') AS created_at FROM users';
         const result = await pool.query(query);
         res.json(result.rows);
     } catch (err) {

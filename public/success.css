@@ -1,0 +1,42 @@
+/* General body styles for the success page */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #eef2f7; /* Light gray background */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+
+/* Container styles */
+.container {
+    text-align: center;
+}
+
+/* Header styling */
+h1 {
+    color: #404142; /* Dark gray text */
+    font-size: 26px;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* Button styling */
+button {
+    background-color: #007BFF; /* Blue button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}

@@ -1,0 +1,101 @@
+/* Global Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #eef2f7; /* Light gray background */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+
+/* General Button Styles */
+button {
+    background-color: #007BFF; /* Blue button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Container for central alignment */
+.container {
+    text-align: center;
+}
+
+/* Header Styling */
+h1 {
+    color: #404142; /* Dark gray text */
+    font-size: 26px;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* Specific Styles for b2c.html */
+.b2c-container {
+    background-color: #fff; /* White background for the form */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    padding: 30px;
+    width: 100%;
+    max-width: 420px;
+}
+
+.b2c-header {
+    background-color: #404142; /* Blue background color */
+    padding: 14px 0; /* No side padding, only top and bottom padding */
+    margin: -30px -30px 20px -30px; /* Negative margin to make the background fill */
+    text-align: center;
+    border-radius: 8px 8px 0 0; /* Rounded top corners */
+}
+
+.b2c-header h1 {
+    color: white; /* White color for text */
+    font-size: 26px;
+    margin: 0;
+    font-weight: 500; /* Slightly bold */
+}
+
+input[type="text"], input[type="email"] {
+    width: 100%;
+    padding: 14px; /* Equal padding for all fields */
+    margin: 12px 0; /* Consistent margin for spacing */
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f7f9fc; /* Subtle background color for inputs */
+    transition: border-color 0.3s ease;
+}
+
+input[type="email"] {
+    margin-bottom: 20px; /* Add extra space below the email field */
+}
+
+input[type="text"]:focus, input[type="email"]:focus {
+    border-color: #007BFF; /* Blue focus border */
+    outline: none;
+    background-color: #eaf4ff; /* Light blue background on focus */
+}
+
+/* Specific Styles for success.html */
+.success-container {
+    text-align: center;
+}
+
+.success-header {
+    color: #404142; /* Dark gray text */
+    font-size: 26px;
+    font-weight: 500;
+    margin: 0;
+}

@@ -12,6 +12,7 @@ async function fetchUsers() {
                     <td>${user.uuid}</td> <!-- Display UUID -->
                     <td>${user.name}</td> <!-- Display Name -->
                     <td>${user.email}</td> <!-- Display Email -->
+                    <td>${user.created_at}</td> <!-- Display Date Created -->
                     <td>
                         <button onclick="editUser('${user.uuid}', '${user.name}', '${user.email}')">Edit</button>
                         <button onclick="deleteUser('${user.uuid}')">Delete</button>

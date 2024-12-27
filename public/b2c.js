@@ -1,5 +1,6 @@
 document.getElementById('userForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission
+
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
 
@@ -13,12 +14,14 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
         });
 
         if (response.ok) {
-            window.location.href = '/success';
+            alert('Details submitted successfully!');
+            window.location.href = '/success'; // Redirect to success page
         } else {
-            alert('Failed to submit details.');
+            const errorMessage = await response.text();
+            alert(`Failed to submit details: ${errorMessage}`);
         }
-    } catch (err) {
-        console.error(err);
-        alert('An error occurred.');
+    } catch (error) {
+        console.error('Error submitting details:', error);
+        alert('An unexpected error occurred.');
     }
 });
