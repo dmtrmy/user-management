@@ -64,6 +64,11 @@ app.get('/user', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'b2c.html'));
 });
 
+// Serve B2C Success page
+app.get('/success', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'success.html'));
+});
+
 // Serve Admin Area
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));
