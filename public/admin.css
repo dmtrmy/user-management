@@ -30,7 +30,7 @@ table thead {
 
 table th, table td {
     padding: 10px;
-    text-align: center;
+    text-align: left;
     border: 1px solid #ddd;
 }
 
@@ -118,7 +118,7 @@ table td button:nth-child(2):hover {
 #editModal button {
     padding: 8px 15px;
     border: none;
-    color: burlywood;
+    color: rgb(18, 10, 1);
     cursor: pointer;
     border-radius: 5px;
     margin: 0 10px;

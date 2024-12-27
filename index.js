@@ -4,6 +4,32 @@ const { Pool } = require('pg');
 const path = require('path');
 const app = express();
 
+// Define the UUID Generator
+function generateUUID() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; // Character set
+    let uuid = '';
+    for (let i = 0; i < 6; i++) {
+        uuid += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return uuid;
+}
+
+// Ensure UUID Uniqueness
+async function generateUniqueUUID() {
+    let isUnique = false;
+    let uuid;
+
+    while (!isUnique) {
+        uuid = generateUUID();
+        const result = await pool.query('SELECT id FROM users WHERE uuid = $1', [uuid]);
+        if (result.rowCount === 0) {
+            isUnique = true;
+        }
+    }
+
+    return uuid; // Return the unique UUID
+}
+
 // Serve static files with caching
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: '1d' }));
 
@@ -45,9 +71,10 @@ app.post('/add-user', async (req, res) => {
     }
 
     try {
-        const query = 'INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id';
-        const result = await pool.query(query, [name, email]);
-        res.send(`User added successfully with ID: ${result.rows[0].id}`);
+        const uuid = await generateUniqueUUID(); // Generate unique UUID
+        const query = 'INSERT INTO users (name, email, uuid) VALUES ($1, $2, $3) RETURNING id';
+        const result = await pool.query(query, [name, email, uuid]);
+        res.send(`User added successfully with ID: ${result.rows[0].id} and UUID: ${uuid}`);
     } catch (err) {
         console.error('Error inserting user:', err.message);
         res.status(500).send('An unexpected error occurred. Please try again later.');
@@ -77,7 +104,8 @@ app.get('/admin', (req, res) => {
 // GET route to list all users
 app.get('/users', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM users');
+        const query = 'SELECT uuid, name, email FROM users'; // Replace ID with UUID
+        const result = await pool.query(query);
         res.json(result.rows);
     } catch (err) {
         console.error('Error retrieving users:', err.message);
@@ -86,8 +114,8 @@ app.get('/users', async (req, res) => {
 });
 
 // PUT route to update a user
-app.put('/update-user/:id', async (req, res) => {
-    const { id } = req.params;
+app.put('/update-user/:uuid', async (req, res) => {
+    const { uuid } = req.params;
     const { name, email } = req.body;
 
     if (!name || !email) {
@@ -95,14 +123,14 @@ app.put('/update-user/:id', async (req, res) => {
     }
 
     try {
-        const query = 'UPDATE users SET name = $1, email = $2 WHERE id = $3';
-        const result = await pool.query(query, [name, email, id]);
+        const query = 'UPDATE users SET name = $1, email = $2 WHERE uuid = $3';
+        const result = await pool.query(query, [name, email, uuid]);
 
         if (result.rowCount === 0) {
-            return res.status(404).send(`User with ID: ${id} not found`);
+            return res.status(404).send(`User with UUID: ${uuid} not found`);
         }
 
-        res.send(`User with ID: ${id} updated successfully.`);
+        res.send(`User with UUID: ${uuid} updated successfully.`);
     } catch (err) {
         console.error('Error updating user:', err.message);
         res.status(500).send('An unexpected error occurred. Please try again later.');
@@ -110,21 +138,24 @@ app.put('/update-user/:id', async (req, res) => {
 });
 
 // DELETE route to delete a user
-app.delete('/delete-user/:id', async (req, res) => {
-    const { id } = req.params; // Extract 'id' from URL parameters
-    console.log(`Deleting user with ID: ${id}`); // Debugging
+app.delete('/delete-user/:uuid', async (req, res) => {
+    const { uuid } = req.params;
 
-    if (!id) {
-        return res.status(400).send({ message: 'User ID is required' });
+    console.log('Backend received UUID for deletion:', uuid); // Debug log to check if UUID is passed correctly
+
+    if (!uuid) {
+        return res.status(400).send({ message: 'User UUID is required' });
     }
 
     try {
-        const query = 'DELETE FROM users WHERE id = $1';
-        const result = await pool.query(query, [id]);
+        const query = 'DELETE FROM users WHERE uuid = $1';
+        const result = await pool.query(query, [uuid]);
+
         if (result.rowCount === 0) {
-            return res.status(404).send({ message: `User with ID: ${id} not found` });
+            return res.status(404).send({ message: `User with UUID: ${uuid} not found` });
         }
-        res.send({ message: `User with ID: ${id} deleted successfully.` });
+
+        res.send({ message: `User with UUID: ${uuid} deleted successfully.` });
     } catch (err) {
         console.error('Error deleting user:', err.message);
         res.status(500).send({ message: 'An error occurred during deletion.' });
