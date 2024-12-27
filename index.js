@@ -101,10 +101,10 @@ app.put('/update-user/:id', async (req, res) => {
 
 // DELETE route to delete a user
 app.delete('/delete-user', async (req, res) => {
-    const { id } = req.body; // Read the ID from the body
+    const { id } = req.body;
 
     if (!id) {
-        return res.status(400).send('User ID is required');
+        return res.status(400).send({ message: "User ID is required" });
     }
 
     try {
@@ -112,13 +112,13 @@ app.delete('/delete-user', async (req, res) => {
         const result = await pool.query(query, [id]);
 
         if (result.rowCount === 0) {
-            return res.status(404).send(`User with ID: ${id} not found`);
+            return res.status(404).send({ message: `User with ID: ${id} not found` });
         }
 
-        res.send(`User with ID: ${id} deleted successfully.`);
+        res.send({ message: `User with ID: ${id} deleted successfully.` });
     } catch (err) {
         console.error('Error deleting user:', err.message);
-        res.status(500).send('An unexpected error occurred. Please try again later.');
+        res.status(500).send({ message: "An unexpected error occurred" });
     }
 });
 
