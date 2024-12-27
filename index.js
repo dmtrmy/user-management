@@ -54,6 +54,11 @@ app.post('/add-user', async (req, res) => {
     }
 });
 
+// Serve Login Area
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
 // Serve B2C Area
 app.get('/user', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'b2c.html'));

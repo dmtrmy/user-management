@@ -1,23 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>B2C User Input</title>
-    <link rel="stylesheet" href="/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <!-- Use Google Fonts for better font selection -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your updated CSS -->
 </head>
 <body>
     <div class="container">
-        <h1>User Registration</h1>
-        <form id="userForm">
-            <label for="name">Name:</label><br>
-            <input type="text" id="name" name="name" required><br><br>
+        <div class="header">
+            <h1>Registration</h1>
+        </div>
+        <form action="#" method="POST">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" placeholder="Jane Doe" required>
 
-            <label for="email">Email:</label><br>
-            <input type="email" id="email" name="email" required><br><br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="youremail@example.com" required>
 
             <button type="submit">Submit</button>
         </form>
-        <p id="responseMessage" style="margin-top: 20px;"></p>
     </div>
-    <script src="/b2c.js"></script>
 </body>
 </html>
