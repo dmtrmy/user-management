@@ -100,8 +100,12 @@ app.put('/update-user/:id', async (req, res) => {
 });
 
 // DELETE route to delete a user
-app.delete('/delete-user/:id', async (req, res) => {
-    const { id } = req.params;
+app.delete('/delete-user', async (req, res) => {
+    const { id } = req.body; // Read the ID from the body
+
+    if (!id) {
+        return res.status(400).send('User ID is required');
+    }
 
     try {
         const query = 'DELETE FROM users WHERE id = $1';
