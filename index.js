@@ -2,7 +2,11 @@
 const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
+const cors = require('cors'); // Import CORS middleware
 const app = express();
+
+// Use CORS globally
+app.use(cors());
 
 // Define the UUID Generator
 function generateUUID() {
