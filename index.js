@@ -75,12 +75,52 @@ app.post('/add-user', async (req, res) => {
     }
 
     try {
+        // First check if the user already exists
+        const checkUserResponse = await fetch('http://localhost:3000/check-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+        });
+
+        const checkUserData = await checkUserResponse.json();
+
+        if (checkUserData.exists) {
+            return res.status(400).send('User with this email already exists');
+        }
+
         const uuid = await generateUniqueUUID(); // Generate unique UUID
         const query = 'INSERT INTO users (name, email, uuid) VALUES ($1, $2, $3) RETURNING id';
         const result = await pool.query(query, [name, email, uuid]);
+
         res.send(`User added successfully with ID: ${result.rows[0].id} and UUID: ${uuid}`);
     } catch (err) {
         console.error('Error inserting user:', err.message);
+        res.status(500).send('An unexpected error occurred. Please try again later.');
+    }
+});
+
+// POST route to check if a user exists based on their email
+app.post('/check-user', async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).send('Email is required');
+    }
+
+    try {
+        // Check if the user already exists in the database
+        const query = 'SELECT id FROM users WHERE email = $1';
+        const result = await pool.query(query, [email]);
+
+        if (result.rowCount > 0) {
+            // User exists
+            return res.json({ exists: true });
+        } else {
+            // User does not exist
+            return res.json({ exists: false });
+        }
+    } catch (err) {
+        console.error('Error checking user existence:', err.message);
         res.status(500).send('An unexpected error occurred. Please try again later.');
     }
 });
