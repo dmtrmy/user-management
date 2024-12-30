@@ -69,37 +69,40 @@ pool.connect((err) => {
 
 // POST route to add a user
 app.post('/add-user', async (req, res) => {
-  const { name, email } = req.body;
-
-  if (!name || !email) {
-    return res.status(400).send('Name and email are required');
-  }
-
-  try {
-    // First check if the user already exists using the /check-user route
-    const checkUserResponse = await axios.post('https://user-management-0jfv.onrender.com/check-user', {
-      email: email
-    });
-
-    const checkUserData = checkUserResponse.data;
-
-    if (checkUserData.exists) {
-      return res.status(400).send('User with this email already exists');
+    const { name, email, street, houseNumber, postalCode, city } = req.body;
+  
+    if (!name || !email || !street || !houseNumber || !postalCode || !city) {
+      return res.status(400).send('Name, email, and address fields are required');
     }
-
-    // Generate unique UUID for the new user
-    const uuid = await generateUniqueUUID();
-
-    // Insert the user into the database
-    const query = 'INSERT INTO users (name, email, uuid) VALUES ($1, $2, $3) RETURNING id';
-    const result = await pool.query(query, [name, email, uuid]);
-
-    res.send(`User added successfully with ID: ${result.rows[0].id} and UUID: ${uuid}`);
-  } catch (err) {
-    console.error('Error inserting user:', err.message);
-    res.status(500).send('An unexpected error occurred. Please try again later.');
-  }
-});
+  
+    try {
+      // First check if the user already exists using the /check-user route
+      const checkUserResponse = await axios.post('https://user-management-0jfv.onrender.com/check-user', {
+        email: email
+      });
+  
+      const checkUserData = checkUserResponse.data;
+  
+      if (checkUserData.exists) {
+        return res.status(400).send('User with this email already exists');
+      }
+  
+      // Generate unique UUID for the new user
+      const uuid = await generateUniqueUUID();
+  
+      // Insert the user into the database with address fields
+      const query = `
+        INSERT INTO users (name, email, uuid, street, house_number, postal_code, city)
+        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id
+      `;
+      const result = await pool.query(query, [name, email, uuid, street, houseNumber, postalCode, city]);
+  
+      res.send(`User added successfully with ID: ${result.rows[0].id} and UUID: ${uuid}`);
+    } catch (err) {
+      console.error('Error inserting user:', err.message);
+      res.status(500).send('An unexpected error occurred. Please try again later.');
+    }
+  });
 
 // POST route to check if a user exists based on their email
 app.post('/check-user', async (req, res) => {
