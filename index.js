@@ -4,6 +4,7 @@ const { Pool } = require('pg');
 const path = require('path');
 const cors = require('cors'); // Import CORS middleware
 const app = express();
+const fetch = require('node-fetch');
 
 // Use CORS globally
 const corsOptions = {
@@ -72,6 +73,8 @@ app.get('/', (req, res) => {
 });
 
 // POST route to add a user
+const fetch = require('node-fetch'); // Import node-fetch
+
 app.post('/add-user', async (req, res) => {
   const { name, email } = req.body;
 
