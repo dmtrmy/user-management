@@ -3,6 +3,7 @@ const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
 const cors = require('cors'); // Import CORS middleware
+const axios = require('axios'); // Import axios for HTTP requests
 const app = express();
 
 // Use CORS globally
@@ -75,14 +76,12 @@ app.post('/add-user', async (req, res) => {
   }
 
   try {
-    // First check if the user already exists
-    const checkUserResponse = await fetch('https://user-management-0jfv.onrender.com/check-user', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
+    // First check if the user already exists using the /check-user route
+    const checkUserResponse = await axios.post('https://user-management-0jfv.onrender.com/check-user', {
+      email: email
     });
 
-    const checkUserData = await checkUserResponse.json();
+    const checkUserData = checkUserResponse.data;
 
     if (checkUserData.exists) {
       return res.status(400).send('User with this email already exists');
