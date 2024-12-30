@@ -13,6 +13,10 @@
                 <th>UUID</th>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Street</th> <!-- New Address Column -->
+                <th>House Number</th> <!-- New Address Column -->
+                <th>Postal Code</th> <!-- New Address Column -->
+                <th>City</th> <!-- New Address Column -->
                 <th>Date Created</th>
                 <th>Actions</th>
             </tr>
@@ -30,6 +34,15 @@
         <input type="text" id="editUserName"><br><br>
         <label for="editUserEmail">Email:</label>
         <input type="email" id="editUserEmail"><br><br>
+        <!-- Add Address Fields in the Edit Modal -->
+        <label for="editUserStreet">Street:</label>
+        <input type="text" id="editUserStreet"><br><br>
+        <label for="editUserHouseNumber">House Number:</label>
+        <input type="text" id="editUserHouseNumber"><br><br>
+        <label for="editUserPostalCode">Postal Code:</label>
+        <input type="text" id="editUserPostalCode"><br><br>
+        <label for="editUserCity">City:</label>
+        <input type="text" id="editUserCity"><br><br>
         <button onclick="saveUser()">Save</button>
         <button onclick="closeEditModal()">Cancel</button>
     </div>

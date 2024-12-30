@@ -69,14 +69,14 @@ pool.connect((err) => {
 
 // POST route to add a user
 app.post('/add-user', async (req, res) => {
-    const { name, email, street, houseNumber, postalCode, city } = req.body;
+    const { name, email, street, house_number, postal_code, city } = req.body; // Destructure address fields
   
-    if (!name || !email || !street || !houseNumber || !postalCode || !city) {
-      return res.status(400).send('Name, email, and address fields are required');
+    if (!name || !email || !street || !house_number || !postal_code || !city) {
+      return res.status(400).send('All fields (name, email, address) are required');
     }
   
     try {
-      // First check if the user already exists using the /check-user route
+      // Check if the user already exists using /check-user route
       const checkUserResponse = await axios.post('https://user-management-0jfv.onrender.com/check-user', {
         email: email
       });
@@ -90,12 +90,12 @@ app.post('/add-user', async (req, res) => {
       // Generate unique UUID for the new user
       const uuid = await generateUniqueUUID();
   
-      // Insert the user into the database with address fields
+      // Insert the user along with address data into the database
       const query = `
-        INSERT INTO users (name, email, uuid, street, house_number, postal_code, city)
+        INSERT INTO users (name, email, street, house_number, postal_code, city, uuid)
         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id
       `;
-      const result = await pool.query(query, [name, email, uuid, street, houseNumber, postalCode, city]);
+      const result = await pool.query(query, [name, email, street, house_number, postal_code, city, uuid]);
   
       res.send(`User added successfully with ID: ${result.rows[0].id} and UUID: ${uuid}`);
     } catch (err) {
@@ -150,16 +150,26 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
-// GET route to list all users
 app.get('/users', async (req, res) => {
-  try {
-    const query = 'SELECT uuid, name, email, TO_CHAR(created_at, \'DD.MM.YYYY\') AS created_at FROM users';
-    const result = await pool.query(query);
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Error retrieving users:', err.message);
-    res.status(500).send('An unexpected error occurred. Please try again later.');
-  }
+    try {
+        const query = `
+            SELECT 
+                uuid, 
+                name, 
+                email, 
+                street, 
+                house_number, 
+                postal_code, 
+                city, 
+                TO_CHAR(created_at, 'DD.MM.YYYY') AS created_at 
+            FROM users
+        `;
+        const result = await pool.query(query);
+        res.json(result.rows); // Return all the user data including address fields
+    } catch (err) {
+        console.error('Error retrieving users:', err.message);
+        res.status(500).send('An unexpected error occurred. Please try again later.');
+    }
 });
 
 // PUT route to update a user
