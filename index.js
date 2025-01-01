@@ -130,7 +130,7 @@ app.post('/check-user', async (req, res) => {
   }
 });
 
-// Check if the user is an admin
+// Backend route to check if the user is an authorized admin
 app.post('/check-admin', async (req, res) => {
     const { email } = req.body; // Get the email sent from the frontend
 
@@ -191,28 +191,45 @@ app.get('/users', async (req, res) => {
     }
 });
 
-// PUT route to update a user
+// PUT route to update user
+// PUT route to update user
 app.put('/update-user/:uuid', async (req, res) => {
-  const { uuid } = req.params;
-  const { name, email } = req.body;
+    const { uuid } = req.params;
+    const { name, email, street, house_number, postal_code, city } = req.body;
 
-  if (!name || !email) {
-    return res.status(400).send('Name and email are required');
-  }
-
-  try {
-    const query = 'UPDATE users SET name = $1, email = $2 WHERE uuid = $3';
-    const result = await pool.query(query, [name, email, uuid]);
-
-    if (result.rowCount === 0) {
-      return res.status(404).send(`User with UUID: ${uuid} not found`);
+    // Validate that all required fields are provided
+    if (!name || !email || !street || !house_number || !postal_code || !city) {
+        return res.status(400).send('All fields (name, email, address) are required');
     }
 
-    res.send(`User with UUID: ${uuid} updated successfully.`);
-  } catch (err) {
-    console.error('Error updating user:', err.message);
-    res.status(500).send('An unexpected error occurred. Please try again later.');
-  }
+    try {
+        // Prepare the SQL query to update the user
+        const query = `
+            UPDATE users
+            SET 
+                name = $1,
+                email = $2,
+                street = $3,
+                house_number = $4,
+                postal_code = $5,
+                city = $6
+            WHERE uuid = $7;
+        `;
+
+        // Execute the query with provided values
+        const result = await pool.query(query, [name, email, street, house_number, postal_code, city, uuid]);
+
+        // Check if no rows were affected (i.e., no user found with the given UUID)
+        if (result.rowCount === 0) {
+            return res.status(404).send('User not found');
+        }
+
+        // Send a custom success message instead of returning the full user data
+        return res.send({ message: `User with UUID: ${uuid} updated successfully!` });
+    } catch (err) {
+        console.error('Error updating user:', err.message);
+        return res.status(500).send('An error occurred while updating the user');
+    }
 });
 
 // DELETE route to delete a user
