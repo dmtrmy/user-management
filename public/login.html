@@ -22,10 +22,15 @@
         const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
         document.getElementById('googleSignInBtn').onclick = async () => {
+    // Detect the environment (local or prod)
+    const redirectUrl = window.location.hostname === 'localhost' 
+        ? 'http://localhost:3000/admin'  // Localhost URL for local testing
+        : 'https://user-management-0jfv.onrender.com/admin';  // Production URL
+
     const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google',
         options: {
-            redirectTo: 'https://user-management-0jfv.onrender.com/admin'
+            redirectTo: redirectUrl
         }
     });
 
