@@ -135,6 +135,11 @@ app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
+// Serve Admin login redirect
+app.get('/', (req, res) => {
+    res.redirect('/admin');  // or wherever you want users to land after login
+  });
+
 // Serve B2C Area
 app.get('/user', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'b2c.html'));

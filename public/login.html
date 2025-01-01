@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Admin Area</title>
+    <!-- Update this line -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div id="loginContainer">
+        <h2>Login with Google</h2>
+        <button id="googleSignInBtn">Sign in with Google</button>
+    </div>
+
+    <script>
+        // Add this line to access createClient
+        const { createClient } = supabase;
+        
+        const supabaseUrl = 'https://ovdbjdhxpznokaggshep.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92ZGJqZGh4cHpub2thZ2dzaGVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU1MDU4MTUsImV4cCI6MjA1MTA4MTgxNX0.mJMmxNqKPC0XhaSQy96hRLp0Ed4qbdm7LcOvDph2YCA';
+        
+        const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+        document.getElementById('googleSignInBtn').onclick = async () => {
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: 'https://user-management-0jfv.onrender.com/admin'
+        }
+    });
+
+    if (error) {
+        console.error('Error:', error.message);
+    }
+};
+    </script>
+</body>
+</html>
