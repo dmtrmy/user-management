@@ -2,42 +2,71 @@
 <html>
 <head>
     <title>Login - Admin Area</title>
-    <!-- Update this line -->
+    <!-- Supabase script -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="login.css">
+    <!-- Your custom stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
 </head>
 <body>
     <div id="loginContainer">
-        <h2>Login with Google</h2>
         <button id="googleSignInBtn">Sign in with Google</button>
     </div>
 
     <script>
-        // Add this line to access createClient
+        // Initialize Supabase client
         const { createClient } = supabase;
-        
         const supabaseUrl = 'https://ovdbjdhxpznokaggshep.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92ZGJqZGh4cHpub2thZ2dzaGVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU1MDU4MTUsImV4cCI6MjA1MTA4MTgxNX0.mJMmxNqKPC0XhaSQy96hRLp0Ed4qbdm7LcOvDph2YCA';
-        
+
         const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
+        // Handle Google sign-in
         document.getElementById('googleSignInBtn').onclick = async () => {
-    // Detect the environment (local or prod)
-    const redirectUrl = window.location.hostname === 'localhost' 
-        ? 'http://localhost:3000/admin'  // Localhost URL for local testing
-        : 'https://user-management-0jfv.onrender.com/admin';  // Production URL
+            const redirectUrl = window.location.hostname === 'localhost'
+                ? 'http://localhost:3000/admin'  // Localhost URL for local testing
+                : 'https://user-management-0jfv.onrender.com/admin';  // Production URL
 
-    const { error } = await supabaseClient.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-            redirectTo: redirectUrl
-        }
-    });
+            // Sign in with Google OAuth
+            const { error, data } = await supabaseClient.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: redirectUrl
+                }
+            });
 
-    if (error) {
-        console.error('Error:', error.message);
-    }
-};
+            // Handle any errors during sign-in
+            if (error) {
+                console.error('Error:', error.message);
+                return;
+            }
+
+            // If sign-in is successful, send the token to backend for validation
+            const accessToken = data.session.access_token;  // Extract access token from the response
+
+            // Send token to backend for validation (e.g., check admin email)
+            try {
+                const response = await fetch('/validate-admin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ token: accessToken })
+                });
+
+                const responseData = await response.json();
+
+                // If the backend confirms the user is an admin, redirect
+                if (responseData.isAdmin) {
+                    window.location.href = '/admin'; // Redirect to the admin page
+                } else {
+                    alert('You do not have access to the admin area.');
+                }
+
+            } catch (error) {
+                console.error('Error validating admin:', error.message);
+            }
+        };
     </script>
 </body>
 </html>

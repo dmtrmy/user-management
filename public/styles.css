@@ -1,7 +1,7 @@
 /* Basic Layout for the form */
 body {
-    font-family: 'Poppins', sans-serif; /* Updated font to match the example */
-    background-color: #eef2f7; /* Light gray background */
+    font-family: 'Poppins', sans-serif;
+    background-color: #eef2f7;
     margin: 0;
     padding: 0;
     display: flex;
@@ -17,9 +17,9 @@ body {
 
 /* Form container */
 .container {
-    background-color: #fff; /* White background for the form */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     padding: 30px;
     width: 100%;
     max-width: 420px;
@@ -27,65 +27,85 @@ body {
 
 /* Header section */
 .header {
-    background-color: #404142; /* Blue background color */
-    padding: 14px 0; /* No side padding, only top and bottom padding */
-    margin: -30px -30px 20px -30px; /* Negative margin to make the background fill */
+    background-color: #404142;
+    padding: 14px 0;
+    margin: -30px -30px 20px -30px;
     text-align: center;
-    border-radius: 8px 8px 0 0; /* Rounded top corners */
+    border-radius: 8px 8px 0 0;
 }
 
 .header h1 {
-    color: white; /* White color for text */
+    color: white;
     font-size: 26px;
     margin: 0;
-    font-weight: 500; /* Slightly bold */
+    font-weight: 500;
 }
 
 /* Input fields */
 input[type="text"], input[type="email"] {
     width: 100%;
-    padding: 14px; /* Equal padding for all fields */
-    margin: 12px 0; /* Consistent margin for spacing */
-    border: 1px solid #ddd; /* Light border */
+    padding: 14px;
+    margin: 12px 0;
+    border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 16px;
     color: #333;
-    background-color: #f7f9fc; /* Subtle background color for inputs */
+    background-color: #f7f9fc;
     transition: border-color 0.3s ease;
 }
 
-/* Increase space between the last input and the button */
 input[type="email"] {
-    margin-bottom: 20px; /* Add extra space below the email field */
+    margin-bottom: 20px;
 }
 
-/* Focus state for inputs */
 input[type="text"]:focus, input[type="email"]:focus {
-    border-color: #007BFF; /* Blue focus border */
+    border-color: #007BFF;
     outline: none;
-    background-color: #eaf4ff; /* Light blue background on focus */
+    background-color: #eaf4ff;
 }
 
 /* Submit button */
 button[type="submit"] {
     width: 100%;
-    padding: 14px; /* Same padding as input fields for alignment */
-    background-color: #007BFF; /* Blue background */
+    padding: 14px;
+    background-color: #007BFF;
     color: white;
     border: none;
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 10px; /* Optional: add some margin to the top of the button for spacing */
+    margin-top: 10px;
 }
 
-/* Submit button hover effect */
 button[type="submit"]:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: #0056b3;
 }
 
 /* Placeholder text styles */
 input::placeholder {
-    color: #aaa; /* Light gray for placeholders */
+    color: #aaa;
+}
+
+/* Style for the Google Sign-In Button */
+#googleSignInBtn {
+    width: 100%;  /* Ensures the button takes up the full width */
+    padding: 14px;  /* Consistent padding with the other buttons */
+    background-color: #4285F4; /* Google blue color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px; /* Space between the button and other elements */
+}
+
+#googleSignInBtn:hover {
+    background-color: #3367D6;  /* Darker blue on hover */
+}
+
+#googleSignInBtn:focus {
+    outline: none;  /* Remove focus outline */
+    border: 2px solid #0056b3; /* Blue outline when focused */
 }

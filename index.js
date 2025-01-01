@@ -130,6 +130,20 @@ app.post('/check-user', async (req, res) => {
   }
 });
 
+// Check if the user is an admin
+app.post('/check-admin', async (req, res) => {
+    const { email } = req.body; // Get the email sent from the frontend
+
+    // List of allowed admin emails
+    const allowedAdminEmails = ['dmtr.my@gmail.com'];  // Replace with your actual admin emails
+
+    if (allowedAdminEmails.includes(email)) {
+        return res.json({ authorized: true }); // Allow access to admin
+    } else {
+        return res.json({ authorized: false }); // Deny access
+    }
+});
+
 // Serve Login Area
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
