@@ -239,3 +239,7 @@ table td button:nth-child(2):hover {
     background-color: #f44336;
     color: white;
 }
+
+#dashboardDiv {
+    display: none;
+}

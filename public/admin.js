@@ -4,11 +4,17 @@ const supabaseClient = supabase.createClient(
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92ZGJqZGh4cHpub2thZ2dzaGVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU1MDU4MTUsImV4cCI6MjA1MTA4MTgxNX0.mJMmxNqKPC0XhaSQy96hRLp0Ed4qbdm7LcOvDph2YCA'
 );
 
+let authChecked = false; // Flag to track if auth check has been performed
+// Initialize Supabase client
+const supabaseClient = supabase.createClient(
+    'https://ovdbjdhxpznokaggshep.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92ZGJqZGh4cHpub2thZ2dzaGVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU1MDU4MTUsImV4cCI6MjA1MTA4MTgxNX0.mJMmxNqKPC0XhaSQy96hRLp0Ed4qbdm7LcOvDph2YCA'
+);
+
 // Check if the user is logged in and authorized
 async function checkAuth() {
     try {
-        // Immediately hide dashboard and login required sections to prevent flashing
-        document.getElementById('dashboardDiv').style.display = 'none';
+        // Immediately hide login required section to prevent flashing
         document.getElementById('loginRequired').style.display = 'none';
 
         const { data: { session }, error } = await supabaseClient.auth.getSession();
@@ -50,44 +56,13 @@ async function checkAuth() {
 // Auth state change listener
 supabaseClient.auth.onAuthStateChange((event, session) => {
     console.log('Auth state changed:', event, session); // Debug log
-    
-    if (event === 'SIGNED_IN') {
-        console.log('User signed in');
-        document.getElementById('dashboardDiv').style.display = 'block';
-        document.getElementById('loginRequired').style.display = 'none';
-        fetchUsers();
-    } else if (event === 'SIGNED_OUT') {
-        console.log('User signed out');
-        document.getElementById('loginRequired').style.display = 'block';
-        document.getElementById('dashboardDiv').style.display = 'none';
+    if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+        checkAuth(); // Only call checkAuth on sign in/out events
     }
 });
 
 // Call checkAuth when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    checkAuth();
-});
-
-// Auth state change listener
-supabaseClient.auth.onAuthStateChange((event, session) => {
-    console.log('Auth state changed:', event, session); // Debug log
-    
-    if (event === 'SIGNED_IN') {
-        console.log('User signed in');
-        document.getElementById('dashboardDiv').style.display = 'block';
-        document.getElementById('loginRequired').style.display = 'none';
-        fetchUsers();
-    } else if (event === 'SIGNED_OUT') {
-        console.log('User signed out');
-        document.getElementById('loginRequired').style.display = 'block';
-        document.getElementById('dashboardDiv').style.display = 'none';
-    }
-});
-
-// Call checkAuth when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    checkAuth();
-});
+document.addEventListener('DOMContentLoaded', checkAuth);
 
 // Fetch and populate the user table
 async function fetchUsers() {
