@@ -1,8 +1,10 @@
-// Initialize Supabase client
-const supabaseClient = supabase.createClient(
-    'https://ovdbjdhxpznokaggshep.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92ZGJqZGh4cHpub2thZ2dzaGVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU1MDU4MTUsImV4cCI6MjA1MTA4MTgxNX0.mJMmxNqKPC0XhaSQy96hRLp0Ed4qbdm7LcOvDph2YCA'
-);
+// Global initialization
+if (!window.supabaseClient) {
+    window.supabaseClient = supabase.createClient(
+        'https://ovdbjdhxpznokaggshep.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92ZGJqZGh4cHpub2thZ2dzaGVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU1MDU4MTUsImV4cCI6MjA1MTA4MTgxNX0.mJMmxNqKPC0XhaSQy96hRLp0Ed4qbdm7LcOvDph2YCA'
+    );
+}
 
 let authChecked = false; // Flag to track if auth check has been performed
 // Initialize Supabase client
