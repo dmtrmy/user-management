@@ -135,7 +135,7 @@ app.post('/check-admin', async (req, res) => {
     const { email } = req.body; // Get the email sent from the frontend
 
     // List of allowed admin emails
-    const allowedAdminEmails = ['dmtr.my@gmail.com'];  // Replace with your actual admin emails
+    const allowedAdminEmails = ['dmtr.my@gmail.com', 'ses@alteos.com', 'cbr@alteos.com'];  // admin emails
 
     if (allowedAdminEmails.includes(email)) {
         return res.json({ authorized: true }); // Allow access to admin
@@ -151,7 +151,7 @@ app.get('/login', (req, res) => {
 
 // Serve Admin login redirect
 app.get('/', (req, res) => {
-    res.redirect('/admin');  // or wherever you want users to land after login
+    res.redirect('/admin');  
   });
 
 // Serve B2C Area
