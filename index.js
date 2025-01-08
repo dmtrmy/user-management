@@ -135,7 +135,7 @@ app.post('/check-admin', async (req, res) => {
     const { email } = req.body; // Get the email sent from the frontend
 
     // List of allowed admin emails
-    const allowedAdminEmails = ['dmtr.my@gmail.com', 'ses@alteos.com', 'cbr@alteos.com'];  // admin emails
+    const allowedAdminEmails = ['dmtr.my@gmail.com', 'ses@alteos.com', 'cbr@alteos.com', 'johannes.becher@embea.com'];  // admin emails
 
     if (allowedAdminEmails.includes(email)) {
         return res.json({ authorized: true }); // Allow access to admin
